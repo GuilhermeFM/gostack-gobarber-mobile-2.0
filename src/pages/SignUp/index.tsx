@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import { Image, ScrollView, Dimensions } from 'react-native';
+import { Image, ScrollView, TextInput, Dimensions } from 'react-native';
 
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
@@ -15,6 +15,8 @@ import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
   const formRef = useRef<FormHandles>(null);
+  const inputNameRef = useRef<TextInput>(null);
+  const inputPasswordRef = useRef<TextInput>(null);
 
   const submitHandle = useCallback((data: object) => {
     console.log(data);
@@ -31,9 +33,42 @@ const SignUp: React.FC = () => {
 
           <Title>Crie sua conta</Title>
 
-          <Input name="email" icon="mail" placeholder="E-mail" />
-          <Input name="name" icon="user" placeholder="Nome" />
-          <Input name="password" icon="lock" placeholder="Senha" />
+          <Input
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            name="email"
+            icon="mail"
+            placeholder="E-mail"
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => {
+              inputNameRef.current?.focus();
+            }}
+          />
+
+          <Input
+            ref={inputNameRef}
+            autoCorrect={false}
+            name="name"
+            icon="user"
+            placeholder="Nome"
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => {
+              inputPasswordRef.current?.focus();
+            }}
+          />
+
+          <Input
+            ref={inputPasswordRef}
+            name="password"
+            icon="lock"
+            placeholder="Senha"
+            secureTextEntry
+            returnKeyType="send"
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
 
           <Button onPress={() => formRef.current?.submitForm()}>Entrar</Button>
         </Form>
