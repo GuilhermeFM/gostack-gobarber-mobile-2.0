@@ -11,6 +11,7 @@ import Input from '../../components/Input';
 import logo from '../../assets/logo.png';
 
 import validate from '../../validations/SignIn';
+import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
@@ -22,7 +23,7 @@ import {
 } from './styles';
 
 interface SignInFormData {
-  name: string;
+  email: string;
   password: string;
 }
 
@@ -31,10 +32,23 @@ const SignIn: React.FC = () => {
   const inputPasswordRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
-  const handleSignIn = useCallback(async (data: SignInFormData) => {
-    const errors = await validate(data);
-    formRef.current?.setErrors(errors || {});
-  }, []);
+  const { signIn } = useAuth();
+
+  const handleSignIn = useCallback(
+    async (data: SignInFormData) => {
+      const errors = await validate(data);
+
+      if (errors) {
+        formRef.current?.setErrors(errors);
+      } else {
+        await signIn({
+          email: data.email,
+          password: data.password,
+        });
+      }
+    },
+    [signIn],
+  );
 
   return (
     <ScrollView
