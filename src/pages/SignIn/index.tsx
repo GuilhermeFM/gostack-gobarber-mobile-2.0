@@ -10,6 +10,8 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import logo from '../../assets/logo.png';
 
+import validate from '../../validations/SignIn';
+
 import {
   Container,
   Title,
@@ -19,13 +21,19 @@ import {
   CreateAccountButtonText,
 } from './styles';
 
+interface SignInFormData {
+  name: string;
+  password: string;
+}
+
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const inputPasswordRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
-  const submitHandle = useCallback((data: object) => {
-    console.log(data);
+  const handleSignIn = useCallback(async (data: SignInFormData) => {
+    const errors = await validate(data);
+    formRef.current?.setErrors(errors || {});
   }, []);
 
   return (
@@ -38,7 +46,7 @@ const SignIn: React.FC = () => {
 
         <Title>Faça seu logon</Title>
 
-        <Form ref={formRef} onSubmit={submitHandle}>
+        <Form ref={formRef} onSubmit={handleSignIn}>
           <Input
             autoCorrect={false}
             autoCapitalize="none"

@@ -10,7 +10,15 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import logo from '../../assets/logo.png';
 
+import validate from '../../validations/SignUp';
+
 import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
+
+interface SignUpFormData {
+  name: string;
+  email: string;
+  password: string;
+}
 
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
@@ -18,8 +26,9 @@ const SignUp: React.FC = () => {
   const inputNameRef = useRef<TextInput>(null);
   const inputPasswordRef = useRef<TextInput>(null);
 
-  const submitHandle = useCallback((data: object) => {
-    console.log(data);
+  const submitHandle = useCallback(async (data: SignUpFormData) => {
+    const errors = await validate(data);
+    formRef.current?.setErrors(errors || {});
   }, []);
 
   return (
