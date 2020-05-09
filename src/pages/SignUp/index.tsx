@@ -11,6 +11,7 @@ import Input from '../../components/Input';
 import logo from '../../assets/logo.png';
 
 import validate from '../../validations/SignUp';
+import api from '../../services/api';
 
 import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 
@@ -26,10 +27,24 @@ const SignUp: React.FC = () => {
   const inputNameRef = useRef<TextInput>(null);
   const inputPasswordRef = useRef<TextInput>(null);
 
-  const submitHandle = useCallback(async (data: SignUpFormData) => {
-    const errors = await validate(data);
-    formRef.current?.setErrors(errors || {});
-  }, []);
+  const submitHandle = useCallback(
+    async (data: SignUpFormData) => {
+      const errors = await validate(data);
+
+      if (errors) {
+        formRef.current?.setErrors(errors);
+      } else {
+        await api.post('users', {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        });
+
+        navigation.goBack();
+      }
+    },
+    [navigation],
+  );
 
   return (
     <ScrollView
